@@ -1,0 +1,114 @@
+// Trip planner code
+// Rishita Meharishi 
+
+// Description: A trip has up to three segments: by car, by tram, and by bike.
+//              The user enters
+//                  total distance for the trip
+//                  min and max length of the car segment
+//                  length of tram segment
+//                  max time for trip
+//                  max CO2 emissions for trip
+//              For the miles traveled by car, from the min to the max, the program prints
+//                  total time taken for trip
+//                  total CO2 emissions for trip
+//                  (a + is printed of the actual time/CO2 emissions is below the max,
+//                  otherwise a - is printed)
+
+import java.util.Scanner;
+
+public class TripPlanner3 {
+    public static void main(String [] args) {
+        // constant trip parameters for car
+        final double CAR_TIME_PER_MILE = 3.0; // minutes taken to travel one mile
+        final double CAR_CARBON_PER_MILE = .68; // CO2 emissions per mile in pounds
+
+        // constant trip parameters for tram
+        final double TRAM_TIME_PER_MILE = 6.0; // minutes taken to travel one mile
+        final double TRAM_CARBON_PER_MILE = 0.33; // CO2 emissions per mile in pounds
+
+        final double BIKE_TIME_PER_MILE = 9.0; // minutes taken to travel one mile
+
+        double totalMiles; // total miles in trip
+        double milesByCar; // miles in car segment
+        double minMilesByCar; // minimum miles in car segment
+        double maxMilesByCar; // maximum miles in car segment
+        double tripTimeByCar; // minutes taken in car segment
+        double carbonByCar; // CO2 emissions in car segment
+        double milesByTram; // miles in tram segment
+        double tripTimeByTram; // minutes taken in tram segment
+        double carbonByTram; // CO2 emissions in tram segment
+        double milesByBike; // miles in bike segment
+        double tripTimeByBike; // minutes taken in bike segment
+        double totalTripTime; // minutes taken in entire trip
+        double totalTripCarbon; // CO2 emissions in entire trip
+        double maxTripTime; // maximum time for entire trip
+        double maxTripCarbon; // maximum CO2 emissions for entire trip
+
+        // get total miles in trip
+        Scanner input = new Scanner(System.in);
+        System.out.print("Please enter total miles in trip: ");
+        totalMiles = input.nextDouble();
+
+        // get min and max miles by car
+        System.out.print("Please enter minimum miles traveled by car: ");
+        minMilesByCar = input.nextDouble();
+        System.out.print("Please enter maximum miles traveled by car: ");
+        maxMilesByCar = input.nextDouble();
+
+        // get miles by tram
+        System.out.print("Please enter miles traveled by tram: ");
+        milesByTram = input.nextDouble();
+
+        // get preferred max time and CO2 emissions
+        System.out.print("Please enter maximum time for trip in minutes: ");
+        maxTripTime = input.nextDouble();
+        System.out.print("Please enter maximum CO2 emissions for trip in lbs: ");
+        maxTripCarbon = input.nextDouble();
+
+        System.out.println();
+        System.out.println("Car miles\tTotal minutes\tTotal emissions (lbs)");
+        milesByCar = minMilesByCar;
+
+        // calculate trip time and CO2 emissions for car miles from min to max
+        while (milesByCar <= maxMilesByCar) {
+            // remaining miles are by bike
+            milesByBike = totalMiles - milesByCar - milesByTram;
+
+            // adjust for user entering too many miles by car and tram
+            if (milesByBike < 0.0) {
+                milesByBike = 0.0;
+                System.out.println("Too many miles by car and tram; bike segment cancelled.");
+            }
+
+            // calculate time taken and CO2 emissions for trip, for car segment
+            tripTimeByCar = milesByCar * CAR_TIME_PER_MILE;
+            carbonByCar = milesByCar * CAR_CARBON_PER_MILE;
+
+            // calculate time taken and CO2 emissions for trip, for tram segment
+            tripTimeByTram = milesByTram * TRAM_TIME_PER_MILE;
+            carbonByTram = milesByTram * TRAM_CARBON_PER_MILE;
+
+            // calculate time taken and CO2 emissions for trip, for bike segment
+            tripTimeByBike = milesByBike * BIKE_TIME_PER_MILE;
+
+            // calculate time and CO2 emissions for entire trip
+            totalTripTime = tripTimeByCar + tripTimeByTram + tripTimeByBike;
+            totalTripCarbon = carbonByCar + carbonByTram;
+
+            System.out.print(milesByCar);
+            System.out.print("\t\t\t" + totalTripTime);
+            if (totalTripTime > maxTripTime) {
+                System.out.print("\t-");
+            } else {
+                System.out.print("\t+");
+            }
+            System.out.print("\t\t" + totalTripCarbon);
+            if (totalTripCarbon > maxTripCarbon) {
+                System.out.println("\t-");
+            } else {
+                System.out.println("\t+");
+            }
+            milesByCar += .5;
+        }
+    }
+}
